@@ -7,21 +7,25 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;700&family=MedievalSharp&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
-      --bg-pergaminho: #0d0a07;
-      --card-bg: rgba(23, 16, 11, 0.92);
+      --bg-pergaminho: #070913;
+      --card-bg: rgba(13, 16, 28, 0.95);
       --borda-dourada: #c5a059;
-      --borda-glow: rgba(197, 160, 89, 0.35);
-      --lua-noite: #a8dadc;
+      --borda-glow: rgba(168, 218, 220, 0.25);
+      --noite-roxo: #6c5ce7;
+      --noite-azul: #48dbfb;
       --texto-primario: #e8d8c8;
       --texto-dourado: #f0c987;
       --verde-elfico: #81b29a;
+      --azul-infra: #a8dadc;
+      --rosa-danca: #e07a5f;
       --fonte-titulo: 'Cinzel Decorative', serif;
       --fonte-sub: 'Cinzel', serif;
       --fonte-corpo: 'Quicksand', sans-serif;
@@ -39,23 +43,37 @@
 
     .card {
       width: 100%;
-      max-width: 500px;
+      max-width: 800px;
       background: var(--card-bg);
       border: 2px solid var(--borda-dourada);
       border-radius: 12px;
-      padding: 18px;
-      box-shadow: 0 0 15px var(--borda-glow);
+      padding: 20px;
+      box-shadow: 0 0 18px var(--borda-glow);
       backdrop-filter: blur(8px);
+      box-sizing: border-box;
+      position: relative;
     }
 
     h2 {
       font-family: var(--fonte-titulo);
-      color: var(--lua-noite);
-      font-size: 1.15rem;
+      color: var(--noite-azul);
+      font-size: 1.2rem;
       text-align: center;
       margin-top: 0;
       border-bottom: 1px solid var(--borda-dourada);
       padding-bottom: 8px;
+    }
+
+    .topo-info {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
     }
 
     .radar-box {
@@ -69,21 +87,24 @@
 
     .bloco {
       background: rgba(0,0,0,0.3);
-      border-left: 3px solid var(--lua-noite);
-      padding: 10px;
+      border-left: 3px solid var(--noite-roxo);
+      padding: 12px;
       border-radius: 0 6px 6px 0;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .label {
       font-family: var(--fonte-sub);
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       color: var(--texto-dourado);
       margin-bottom: 6px;
       font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    input[type="text"], textarea {
+    input[type="text"], textarea, select {
       width: 100%;
       background: rgba(0,0,0,0.5);
       border: 1px solid var(--borda-dourada);
@@ -95,83 +116,338 @@
       box-sizing: border-box;
     }
 
-    .lista-tarefas {
-      margin-top: 8px;
-      font-size: 0.82rem;
+    .postit-card-hoje {
+      background: rgba(13, 16, 28, 0.9);
+      border-left: 4px solid var(--noite-azul);
+      border-top: 1px solid rgba(197, 160, 89, 0.2);
+      border-right: 1px solid rgba(197, 160, 89, 0.2);
+      border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
     }
 
-    .item-tf {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0,0,0,0.4);
-      padding: 6px 8px;
-      border-radius: 4px;
-      margin-bottom: 4px;
-      border: 1px solid rgba(197, 160, 89, 0.2);
+    .postit-card-hoje:hover {
+      background: rgba(168, 218, 220, 0.15);
     }
 
-    .item-tf.concluida {
+    .postit-card-hoje.concluido {
       opacity: 0.5;
       text-decoration: line-through;
     }
 
-    .frase {
-      font-family: 'MedievalSharp', cursive;
-      font-size: 0.9rem;
-      color: var(--texto-dourado);
-      text-align: center;
-      padding: 8px;
-      background: rgba(0,0,0,0.2);
-      border-radius: 6px;
-      margin: 10px 0;
-    }
-
     .btn-salvar {
       width: 100%;
-      background: linear-gradient(135deg, #c5a059, #a8dadc);
+      background: linear-gradient(135deg, #c5a059, #6c5ce7);
       border: none;
-      color: #0d0a07;
+      color: #ffffff;
       font-family: var(--fonte-sub);
       font-weight: bold;
-      padding: 10px;
+      padding: 11px;
       border-radius: 6px;
       cursor: pointer;
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+
+    /* MODAL DO CARD COMPLETO */
+    .modal-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(6px);
+      border-radius: 12px;
+      z-index: 100;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 15px 0;
+      overflow-y: auto;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 2px solid var(--borda-dourada);
+      border-radius: 8px;
+      padding: 18px;
+      width: 92%;
+      max-width: 520px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+
+    .modal-titulo {
+      font-family: var(--fonte-sub);
+      color: var(--texto-dourado);
+      font-size: 0.92rem;
+      font-weight: bold;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+      padding-bottom: 6px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 0.72rem;
+      color: var(--texto-dourado);
+      font-family: var(--fonte-sub);
+      font-weight: bold;
+    }
+
+    .grid-form-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .secao-card-bloco {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(197, 160, 89, 0.2);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .subtitulo-card {
+      font-family: var(--fonte-sub);
+      font-size: 0.75rem;
+      color: var(--noite-azul);
+      font-weight: bold;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+      padding-bottom: 3px;
+    }
+
+    .bar-acoes-copia {
+      display: flex;
+      gap: 6px;
+      background: rgba(197, 160, 89, 0.1);
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px dashed rgba(197, 160, 89, 0.3);
+      flex-wrap: wrap;
+    }
+
+    .modal-botoes {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      border-top: 1px solid rgba(197, 160, 89, 0.2);
+      padding-top: 10px;
+    }
+
+    .btn-modal {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--borda-dourada);
+      color: var(--texto-primario);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-family: var(--fonte-sub);
+    }
+
+    .btn-modal-salvar {
+      background: linear-gradient(135deg, #c5a059, #6c5ce7);
+      color: #ffffff;
+      font-weight: bold;
+      border: none;
+    }
+
+    .btn-modal-del {
+      background: transparent;
+      border: 1px solid #e07a5f;
+      color: #e07a5f;
     }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h2>🌙 Lente da Noite — O Recolhimento</h2>
+    <h2>🌙 Lente da Noite — Descompressão & Fechamento</h2>
 
-    <!-- Leitura do Radar Corporal da Noite -->
+    <div class="topo-info">
+      <div><i class="fa-solid fa-moon"></i> <strong>Sintonização Noturna</strong></div>
+      <div style="color: var(--noite-azul);" id="hora-rio">--:--:--</div>
+    </div>
+
+    <!-- RADAR CORPORAL DA NOITE -->
     <div class="radar-box">
-      <div style="font-family: var(--fonte-sub); color: var(--texto-dourado); font-size: 0.75rem; font-weight: bold; margin-bottom: 4px;">
-        🌿 Radar Corporal (Último Registro)
+      <div style="font-family: var(--fonte-sub); color: var(--texto-dourado); font-size: 0.78rem; font-weight: bold; margin-bottom: 4px;">
+        🌿 Radar Corporal (Último Registro do Ciclo)
       </div>
       <div id="radar-info">Carregando dados do corpo...</div>
     </div>
 
+    <!-- INTEGRAÇÃO DO DIA (FECHAMENTO) -->
     <div class="bloco">
-      <div class="label">🍃 Check para Baixo (Vitória do Dia)</div>
-      <input type="text" id="vitoria-noite" placeholder="O que merece reconhecimento pelo dia de hoje?" />
+      <div class="label">📜 Integração & Registro da Noite</div>
+      <textarea id="foco-noite" rows="3" placeholder="Como o dia se encerra? O que foi concluído, o que descarregar da mente para dormir tranquila..."></textarea>
     </div>
 
-    <!-- Tarefas vindas do Planejamento Diário para Fechamento Noturno -->
-    <div class="bloco">
-      <div class="label">📋 Tarefas Alocadas para a Noite</div>
-      <div id="lista-tarefas-noite" class="lista-tarefas">Carregando tarefas...</div>
+    <!-- TAREFAS ALOCADAS PARA A NOITE (CLICÁVEIS) -->
+    <div class="bloco" style="border-left-color: var(--noite-azul);">
+      <div class="label" style="color: var(--noite-azul);">
+        <span>📋 Compromissos & Ritual Noturno (Clique duplo para abrir)</span>
+      </div>
+      <div id="lista-tarefas-noite">Carregando tarefas...</div>
     </div>
 
-    <div class="bloco">
-      <div class="label">🕊️ O que fica para amanhã (Soltar a mente)</div>
-      <textarea id="pendencia-noite" rows="2" placeholder="Despeje aqui para deitar leve e sem pendências na cabeça..."></textarea>
+    <button class="btn-salvar" onclick="salvar()">🌱 Sincronizar Bloco da Noite</button>
+
+    <!-- MODAL DO CARD COMPLETO -->
+    <div class="modal-overlay" id="modal-card">
+      <div class="modal-box">
+        <div class="modal-titulo" id="modal-card-titulo">🎴 CARD DO EVENTO / COMPROMISSO</div>
+
+        <div class="bar-acoes-copia" id="box-acoes-duplicar" style="display:none;">
+          <button class="btn-modal" onclick="duplicarCardMesmoDia()">📋 Duplicar Neste Dia</button>
+          <button class="btn-modal" onclick="copiarParaOutraData()">👯 Copiar p/ Outra Data</button>
+          <button class="btn-modal" onclick="adiarParaAmanha()">⏳ Adiar p/ Amanhã</button>
+        </div>
+
+        <div class="form-group">
+          <label>🎯 Título / Nome do Evento / Missão</label>
+          <input type="text" id="card-titulo-input" placeholder="Ex: Dança, Leitura, Higiene do Sono..." />
+        </div>
+
+        <div class="grid-form-2">
+          <div class="form-group">
+            <label>📅 Data Específica</label>
+            <input type="date" id="card-data-input" />
+          </div>
+          <div class="form-group">
+            <label>Pilar / Categoria</label>
+            <select id="card-pilar-input">
+              <option value="pessoal">👤 Pessoal / Aniversários</option>
+              <option value="casa">🏠 Casa & Pets</option>
+              <option value="loja">🏪 Loja & Auto</option>
+              <option value="estudos">📚 Estudos & ENEM</option>
+              <option value="danca">💃 Dança / Saúde</option>
+              <option value="infra">🛠️ Manutenção / Infra</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-form-2">
+          <div class="form-group">
+            <label>Frequência / Recorrência</label>
+            <select id="card-freq-input">
+              <option value="Único">Único 📌</option>
+              <option value="Semanal">Semanal 🔄</option>
+              <option value="Quinzenal">Quinzenal 🔄</option>
+              <option value="Mensal">Mensal 📅</option>
+              <option value="Anual">Anual 🎂</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Período / Bloco</label>
+            <select id="card-periodo-input">
+              <option value="Dia Todo">Dia Todo ☀️</option>
+              <option value="Manhã">Manhã 🌅</option>
+              <option value="Tarde">Tarde ☀️</option>
+              <option value="Noite">Noite 🌙</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 🔄 CASCA DO CICLO DO CARD -->
+        <div class="secao-card-bloco">
+          <div class="subtitulo-card">🔄 CASCA DO CICLO (As 3 Fases)</div>
+          
+          <div class="form-group">
+            <label>🌅 1. Antes (Preparação & Alinhamento)</label>
+            <textarea id="card-fase-antes" rows="2" placeholder="Ações preparatórias..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>🌸 2. Vivência (Execução Regulada & Tração)</label>
+            <textarea id="card-fase-vivencia" rows="2" placeholder="Foco de execução..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>🌙 3. Integração (Recolhimento & Fechamento)</label>
+            <textarea id="card-fase-integracao" rows="2" placeholder="Descompressão..."></textarea>
+          </div>
+        </div>
+
+        <!-- 📜 HISTÓRICO & ESTADO -->
+        <div class="secao-card-bloco">
+          <div class="subtitulo-card">📜 Histórico & Estado</div>
+          
+          <div class="grid-form-2">
+            <div class="form-group">
+              <label>📜 Histórico</label>
+              <input type="text" id="card-historico" placeholder="Registros" />
+            </div>
+            <div class="form-group">
+              <label>📍 Agora</label>
+              <input type="text" id="card-agora" placeholder="Estado ativo" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 🛡️ PROTEÇÕES -->
+        <div class="secao-card-bloco">
+          <div class="subtitulo-card" style="color: var(--rosa-danca);">🛡️ Proteções & Balizas</div>
+          
+          <div class="grid-form-2">
+            <div class="form-group">
+              <label>Proteções de Hoje</label>
+              <input type="text" id="card-protecoes" placeholder="Limites" />
+            </div>
+            <div class="form-group">
+              <label>🚪 Próxima Transição</label>
+              <input type="text" id="card-transicao" placeholder="Transição" />
+            </div>
+          </div>
+
+          <div class="grid-form-2">
+            <div class="form-group">
+              <label>⏱️ Linha de Saída</label>
+              <input type="text" id="card-linha-saida" placeholder="Limite max" />
+            </div>
+            <div class="form-group">
+              <label>🚨 ALARME (Saída)</label>
+              <input type="text" id="card-alarme" placeholder="Alarme" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Demandas Essenciais</label>
+            <textarea id="card-demandas" rows="2" placeholder="Demandas essenciais..."></textarea>
+          </div>
+        </div>
+
+        <!-- 🎒 CHECKLIST -->
+        <div class="secao-card-bloco">
+          <div class="subtitulo-card" style="color: var(--azul-infra);">🎒 Checklist de Saída & Proteção Sensorial</div>
+          <textarea id="card-checklist" rows="3" placeholder="- [ ] Óculos/Fones..."></textarea>
+        </div>
+
+        <div class="modal-botoes">
+          <button class="btn-modal btn-modal-del" id="btn-excluir-card" onclick="excluirCardAtual()">🗑️ Excluir Card</button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-modal" onclick="fecharModalCard()">Cancelar</button>
+            <button class="btn-modal btn-modal-salvar" onclick="salvarCardAtual()">💾 Salvar Card Completo</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="frase">“O dia terminou. O que foi feito foi o suficiente por hoje.”</div>
-
-    <button class="btn-salvar" onclick="salvar()">🌙 Fechar o Dia & Descansar</button>
   </div>
 
   <script>
@@ -187,23 +463,30 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const docId = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-    let todasTarefas = [];
 
-    // Escuta em Tempo Real do Ciclo Diário
-    db.collection("ciclo_diario").doc(docId).onSnapshot(doc => {
+    const hojeDataObj = new Date();
+    const docIdHojeKey = `${hojeDataObj.getFullYear()}-${(hojeDataObj.getMonth()+1).toString().padStart(2,'0')}-${hojeDataObj.getDate().toString().padStart(2,'0')}`;
+    let cardsUniversais = [];
+    let cardEmEdicao = null;
+
+    function getHoraRioStr() {
+      return new Date().toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + ' (' + new Date().toLocaleDateString('pt-BR') + ')';
+    }
+
+    // 1. ESCUTA O CICLO DIÁRIO
+    db.collection("ciclo_diario").doc(docIdHojeKey).onSnapshot(doc => {
       if(doc.exists) {
         const d = doc.data();
-        if(d.vitoriaNoite !== undefined) document.getElementById('vitoria-noite').value = d.vitoriaNoite;
-        if(d.pendenciaNoite !== undefined) document.getElementById('pendencia-noite').value = doc.data().pendenciaNoite;
-        if(d.tarefas) {
-          todasTarefas = d.tarefas;
-          renderizarTarefasNoite();
-        }
+        if(d.focoNoite !== undefined) document.getElementById('foco-noite').value = d.focoNoite;
+        else if(d.faseIntegracao !== undefined) document.getElementById('foco-noite').value = d.faseIntegracao;
+        
+        document.getElementById('hora-rio').innerText = d.atualizadoEmTexto || getHoraRioStr();
+      } else {
+        document.getElementById('hora-rio').innerText = getHoraRioStr();
       }
     });
 
-    // Escuta em Tempo Real do Check-in Corporal
+    // 2. ESCUTA O RADAR CORPORAL
     db.collection("jardim_florescimento").doc("radar_funcionamento").onSnapshot(doc => {
       const container = document.getElementById('radar-info');
       if (doc.exists && doc.data().registros && doc.data().registros.length > 0) {
@@ -212,47 +495,168 @@
         container.innerHTML = `
           <div>Bateria: <strong style="color:var(--verde-elfico);">${u.bateria || '🟢 Regulado'}</strong> (${u.hora || ''})</div>
           <div>Tensão: ${u.corpo || 'Sem tensão'}</div>
-          <div style="color:var(--lua-noite); margin-top:2px;">Orientação: <strong>${u.acao || 'Nenhuma'}</strong></div>
+          <div style="color:var(--noite-azul); margin-top:2px;">Orientação: <strong>${u.acao || 'Nenhuma'}</strong></div>
         `;
       } else {
         container.innerText = "Nenhum check-in corporal registrado hoje.";
       }
     });
 
+    // 3. ESCUTA OS CARDS DA NOITE NO CALENDÁRIO UNIVERSAL
+    db.collection("agenda_cards").onSnapshot(snapshot => {
+      cardsUniversais = [];
+      snapshot.forEach(doc => {
+        cardsUniversais.push({ id: doc.id, ...doc.data() });
+      });
+      renderizarTarefasNoite();
+    });
+
     function renderizarTarefasNoite() {
       const container = document.getElementById('lista-tarefas-noite');
-      const daNoite = todasTarefas.filter(t => t.periodo === 'noite');
+      const cardsNoite = cardsUniversais.filter(c => c.data === docIdHojeKey && (c.periodo === 'Noite' || c.periodo === 'Dia Todo'));
 
-      if(daNoite.length === 0) {
-        container.innerHTML = '<p style="font-size:0.75rem; color:#aaa; margin:0;">Nenhuma tarefa específica para a noite.</p>';
+      if(cardsNoite.length === 0) {
+        container.innerHTML = '<p style="font-size:0.75rem; color:#aaa; margin:0;">Nenhum compromisso alocado especificamente para a noite.</p>';
         return;
       }
 
       let html = '';
-      daNoite.forEach(t => {
+      cardsNoite.forEach(c => {
         html += `
-          <div class="item-tf ${t.concluida ? 'concluida' : ''}">
-            <input type="checkbox" ${t.concluida ? 'checked' : ''} onclick="alternarConcluida(${t.id})" />
-            <span>${t.texto}</span>
+          <div class="postit-card-hoje ${c.concluido ? 'concluido' : ''}" ondblclick="abrirModalCard('${c.id}')">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="color:var(--noite-azul);">🌙 ${c.titulo}</strong>
+              <span style="font-size:0.65rem; color:var(--azul-infra);">${c.periodo || 'Noite'}</span>
+            </div>
+            ${c.agora ? `<div style="font-size:0.7rem; color:var(--texto-dourado);">📍 ${c.agora}</div>` : ''}
+            <div style="font-size:0.62rem; color:#aaa; margin-top:3px;">(Clique duplo para abrir a Casca do Card)</div>
           </div>
         `;
       });
       container.innerHTML = html;
     }
 
-    async function alternarConcluida(id) {
-      todasTarefas = todasTarefas.map(t => t.id === id ? { ...t, concluida: !t.concluida } : t);
-      await db.collection("ciclo_diario").doc(docId).set({ tarefas: todasTarefas }, { merge: true });
+    // MODAL DE CARDS
+    function abrirModalCard(cardId) {
+      const card = cardsUniversais.find(c => c.id === cardId);
+      if (!card) return;
+      cardEmEdicao = card;
+      document.getElementById('modal-card-titulo').innerText = '✏️ EDITAR CARD DO EVENTO';
+      document.getElementById('box-acoes-duplicar').style.display = 'flex';
+
+      document.getElementById('card-titulo-input').value = card.titulo || '';
+      document.getElementById('card-data-input').value = card.data || docIdHojeKey;
+      document.getElementById('card-pilar-input').value = card.pilar || 'pessoal';
+      document.getElementById('card-freq-input').value = card.frequencia || 'Único';
+      document.getElementById('card-periodo-input').value = card.periodo || 'Noite';
+
+      document.getElementById('card-fase-antes').value = card.faseAntes || '';
+      document.getElementById('card-fase-vivencia').value = card.faseVivencia || '';
+      document.getElementById('card-fase-integracao').value = card.faseIntegracao || '';
+      document.getElementById('card-historico').value = card.historico || '';
+      document.getElementById('card-agora').value = card.agora || '';
+      document.getElementById('card-protecoes').value = card.protecoes || '';
+      document.getElementById('card-transicao').value = card.transicao || '';
+      document.getElementById('card-linha-saida').value = card.linhaSaida || '';
+      document.getElementById('card-alarme').value = card.alarme || '';
+      document.getElementById('card-demandas').value = card.demandas || '';
+      document.getElementById('card-checklist').value = card.checklist || '';
+
+      document.getElementById('btn-excluir-card').style.display = 'block';
+      document.getElementById('modal-card').style.display = 'flex';
+    }
+
+    function fecharModalCard() {
+      document.getElementById('modal-card').style.display = 'none';
+      cardEmEdicao = null;
+    }
+
+    function extrairObjetoFormulario() {
+      return {
+        titulo: document.getElementById('card-titulo-input').value.trim(),
+        data: document.getElementById('card-data-input').value,
+        pilar: document.getElementById('card-pilar-input').value,
+        frequencia: document.getElementById('card-freq-input').value,
+        periodo: document.getElementById('card-periodo-input').value,
+        faseAntes: document.getElementById('card-fase-antes').value.trim(),
+        faseVivencia: document.getElementById('card-fase-vivencia').value.trim(),
+        faseIntegracao: document.getElementById('card-fase-integracao').value.trim(),
+        historico: document.getElementById('card-historico').value.trim(),
+        agora: document.getElementById('card-agora').value.trim(),
+        protecoes: document.getElementById('card-protecoes').value.trim(),
+        transicao: document.getElementById('card-transicao').value.trim(),
+        linhaSaida: document.getElementById('card-linha-saida').value.trim(),
+        alarme: document.getElementById('card-alarme').value.trim(),
+        demandas: document.getElementById('card-demandas').value.trim(),
+        checklist: document.getElementById('card-checklist').value.trim(),
+        concluido: cardEmEdicao ? (cardEmEdicao.concluido || false) : false,
+        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+      };
+    }
+
+    async function salvarCardAtual() {
+      const cardObj = extrairObjetoFormulario();
+      if (!cardObj.titulo || !cardObj.data) return alert("Título e Data são obrigatórios.");
+
+      if (cardEmEdicao) {
+        await db.collection("agenda_cards").doc(cardEmEdicao.id).set(cardObj, { merge: true });
+      }
+      fecharModalCard();
+    }
+
+    async function duplicarCardMesmoDia() {
+      const cardObj = extrairObjetoFormulario();
+      cardObj.titulo = `${cardObj.titulo} (Cópia)`;
+      delete cardObj.id;
+      await db.collection("agenda_cards").add(cardObj);
+      fecharModalCard();
+    }
+
+    async function copiarParaOutraData() {
+      const novaData = prompt("Digite a nova data para copiar o Card (YYYY-MM-DD):", document.getElementById('card-data-input').value);
+      if (!novaData) return;
+
+      const cardObj = extrairObjetoFormulario();
+      cardObj.data = novaData;
+      delete cardObj.id;
+
+      await db.collection("agenda_cards").add(cardObj);
+      fecharModalCard();
+    }
+
+    async function adiarParaAmanha() {
+      const dAmanha = new Date(hojeDataObj.getFullYear(), hojeDataObj.getMonth(), hojeDataObj.getDate() + 1);
+      const dataAmanhaKey = `${dAmanha.getFullYear()}-${(dAmanha.getMonth()+1).toString().padStart(2,'0')}-${dAmanha.getDate().toString().padStart(2,'0')}`;
+
+      const cardObj = extrairObjetoFormulario();
+      cardObj.data = dataAmanhaKey;
+
+      if (cardEmEdicao) {
+        await db.collection("agenda_cards").doc(cardEmEdicao.id).set(cardObj, { merge: true });
+      }
+      fecharModalCard();
+    }
+
+    async function excluirCardAtual() {
+      if (cardEmEdicao) {
+        await db.collection("agenda_cards").doc(cardEmEdicao.id).delete();
+        fecharModalCard();
+      }
     }
 
     async function salvar() {
-      await db.collection("ciclo_diario").doc(docId).set({
-        data: new Date().toLocaleDateString('pt-BR'),
-        vitoriaNoite: document.getElementById('vitoria-noite').value,
-        pendenciaNoite: document.getElementById('pendencia-noite').value,
+      const horaStr = getHoraRioStr();
+      document.getElementById('hora-rio').innerText = horaStr;
+      const txtNoite = document.getElementById('foco-noite').value.trim();
+
+      await db.collection("ciclo_diario").doc(docIdHojeKey).set({
+        focoNoite: txtNoite,
+        faseIntegracao: txtNoite, // Sincroniza com o ciclo diário
+        atualizadoEmTexto: horaStr,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
-      alert("✨ Noite Registrada com sucesso. Bom descanso!");
+
+      alert("🌙 Bloco da Noite Sincronizado!");
     }
   </script>
 </body>
